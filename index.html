@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ótica Visão Clara - Sistema de Clientes</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #4f46e5;
+            --secondary-color: #6366f1;
+            --accent-color: #a5b4fc;
+            --text-color: #1e293b;
+            --light-bg: #f8fafc;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            color: var(--text-color);
+            background-color: var(--light-bg);
+        }
+        
+        .login-container {
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+        }
+        
+        .glass-effect {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border-radius: 10px;
+            border: 1px solid rgba(255, 255, 255, 0.18);
+        }
+        
+        .btn-primary {
+            background-color: var(--primary-color);
+            transition: all 0.3s ease;
+        }
+        
+        .btn-primary:hover {
+            background-color: #4338ca;
+            transform: translateY(-2px);
+        }
+        
+        .table-responsive {
+            overflow-x: auto;
+        }
+        
+        @media (max-width: 768px) {
+            .login-box {
+                width: 90% !important;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Login Page -->
+    <div id="login-page" class="min-h-screen flex items-center justify-center p-4 login-container">
+        <div class="glass-effect p-8 rounded-lg shadow-2xl w-full max-w-md">
+            <div class="text-center mb-8">
+                <i class="fas fa-glasses text-white text-5xl mb-4"></i>
+                <h1 class="text-3xl font-bold text-white">Ótica Visão Clara</h1>
+                <p class="text-white opacity-80 mt-2">Sistema de Gerenciamento</p>
+            </div>
+            
+            <form id="login-form" class="space-y-6">
+                <div>
+                    <label for="username" class="block text-sm font-medium text-white mb-1">Usuário</label>
+                    <div class="relative">
+                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                            <i class="fas fa-user text-gray-300"></i>
+                        </div>
+                        <input type="text" id="username" name="username" required 
+                               class="pl-10 w-full px-4 py-2 rounded-lg bg-white bg-opacity-20 border border-white border-opacity-30 text-white placeholder-gray-200 focus:outline-none focus:ring-2 focus:ring-white focus:border-transparent" 
+                               placeholder="Digite seu usuário">
+                    </div>
+                </div>
+                
+                <div>
+                    <label for="password" class="block text-sm font-medium text-white mb-1">Senha</label>
+                    <div class="relative">
+                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                            <i class="fas fa-lock text-gray-300"></i>
+                        </div>
+                        <input type="password" id="password" name="password" required 
+                               class="pl-10 w-full px-4 py-2 rounded-lg bg-white bg-opacity-20 border border-white border-opacity-30 text-white placeholder-gray-200 focus:outline-none focus:ring-2 focus:ring-white focus:border-transparent" 
+                               placeholder="Digite sua senha">
+                    </div>
+                </div>
+                
+                <div id="login-error" class="text-red-300 text-sm hidden">
+                    <i class="fas fa-exclamation-circle mr-1"></i> Usuário ou senha incorretos
+                </div>
+                
+                <button type="submit" class="w-full btn-primary text-white py-2 px-4 rounded-lg font-medium flex items-center justify-center">
+                    <i class="fas fa-sign-in-alt mr-2"></i> Entrar
+                </button>
+            </form>
+        </div>
+    </div>
+    
+    <!-- Customers Page (hidden by default) -->
+    <div id="customers-page" class="min-h-screen hidden">
+        <nav class="bg-white shadow-sm">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="flex justify-between h-16">
+                    <div class="flex items-center">
+                        <i class="fas fa-glasses text-indigo-600 text-xl mr-2"></i>
+                        <span class="text-xl font-semibold text-gray-900">Ótica Visão Clara</span>
+                    </div>
+                    <div class="flex items-center">
+                        <button id="logout-btn" class="text-gray-500 hover:text-gray-700 px-3 py-2 rounded-md text-sm font-medium">
+                            <i class="fas fa-sign-out-alt mr-1"></i> Sair
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </nav>
+        
+        <div class="py-8 px-4 sm:px-6 lg:px-8">
+            <div class="max-w-7xl mx-auto">
+                <div class="flex justify-between items-center mb-8">
+                    <h2 class="text-2xl font-bold text-gray-900">Clientes</h2>
+                    <button id="add-customer-btn" class="btn-primary text-white px-4 py-2 rounded-md text-sm font-medium">
+                        <i class="fas fa-plus mr-1"></i> Novo Cliente
+                    </button>
+                </div>
+                
+                <div class="bg-white shadow rounded-lg overflow-hidden">
+                    <div class="table-responsive">
+                        <table class="min-w-full divide-y divide-gray-200">
+                            <thead class="bg-gray-50">
+                                <tr>
+                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Nome</th>
+                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">CPF</th>
+                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Telefone</th>
+                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Valor (R$)</th>
+                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Ações</th>
+                                </tr>
+                            </thead>
+                            <tbody id="customers-table-body" class="bg-white divide-y divide-gray-200">
+                                <!-- Customers will be loaded here -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Add/Edit Customer Modal -->
+        <div id="customer-modal" class="fixed z-10 inset-0 overflow-y-auto hidden">
+            <div class="flex items-center justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+                <div class="fixed inset-0 transition-opacity" aria-hidden="true">
+                    <div class="absolute inset-0 bg-gray-500 opacity-75"></div>
+                </div>
+                
+                <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
+                
+                <div class="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
+                    <div class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
+                        <h3 class="text-lg leading-6 font-medium text-gray-900 mb-4" id="modal-title">Adicionar Cliente</h3>
+                        
+                        <form id="customer-form" class="space-y-4">
+                            <input type="hidden" id="customer-id">
+                            
+                            <div>
+                                <label for="name" class="block text-sm font-medium text-gray-700">Nome</label>
+                                <input type="text" id="name" name="name" required class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500">
+                            </div>
+                            
+                            <div>
+                                <label for="cpf" class="block text-sm font-medium text-gray-700">CPF</label>
+                                <input type="text" id="cpf" name="cpf" required class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500">
+                            </div>
+                            
+                            <div>
+                                <label for="phone" class="block text-sm font-medium text-gray-700">Telefone</label>
+                                <input type="text" id="phone" name="phone" required class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500">
+                            </div>
+                            
+                            <div>
+                                <label for="amount" class="block text-sm font-medium text-gray-700">Valor (R$)</label>
+                                <input type="number" step="0.01" id="amount" name="amount" required class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500">
+                            </div>
+                        </form>
+                    </div>
+                    
+                    <div class="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
+                        <button type="button" id="save-customer-btn" class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-indigo-600 text-base font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:ml-3 sm:w-auto sm:text-sm">
+                            Salvar
+                        </button>
+                        <button type="button" id="cancel-modal-btn" class="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm">
+                            Cancelar
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Sample customer data
+        let customers = [
+            { id: 1, name: "Maria Silva", cpf: "123.456.789-00", phone: "(11) 98765-4321", amount: 850.50 },
+            { id: 2, name: "João Santos", cpf: "987.654.321-00", phone: "(21) 99876-5432", amount: 1200.00 },
+            { id: 3, name: "Ana Oliveira", cpf: "456.789.123-00", phone: "(31) 98765-1234", amount: 750.25 },
+            { id: 4, name: "Carlos Pereira", cpf: "789.123.456-00", phone: "(41) 99876-4321", amount: 950.75 },
+            { id: 5, name: "Juliana Costa", cpf: "321.654.987-00", phone: "(51) 98765-6789", amount: 680.00 }
+        ];
+
+        // DOM Elements
+        const loginPage = document.getElementById('login-page');
+        const customersPage = document.getElementById('customers-page');
+        const loginForm = document.getElementById('login-form');
+        const loginError = document.getElementById('login-error');
+        const logoutBtn = document.getElementById('logout-btn');
+        const customersTableBody = document.getElementById('customers-table-body');
+        const addCustomerBtn = document.getElementById('add-customer-btn');
+        const customerModal = document.getElementById('customer-modal');
+        const customerForm = document.getElementById('customer-form');
+        const saveCustomerBtn = document.getElementById('save-customer-btn');
+        const cancelModalBtn = document.getElementById('cancel-modal-btn');
+        const modalTitle = document.getElementById('modal-title');
+
+        // Current customer being edited
+        let currentCustomerId = null;
+
+        // Login function
+        loginForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            
+            // Simple validation (username: admin, password: 1234)
+            if (username === 'admin' && password === '1234') {
+                loginError.classList.add('hidden');
+                loginPage.classList.add('hidden');
+                customersPage.classList.remove('hidden');
+                renderCustomers();
+            } else {
+                loginError.classList.remove('hidden');
+            }
+        });
+
+        // Logout function
+        logoutBtn.addEventListener('click', function() {
+            loginPage.classList.remove('hidden');
+            customersPage.classList.add('hidden');
+            document.getElementById('username').value = '';
+            document.getElementById('password').value = '';
+        });
+
+        // Render customers table
+        function renderCustomers() {
+            customersTableBody.innerHTML = '';
+            
+            customers.forEach(customer => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">${customer.name}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${customer.cpf}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${customer.phone}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">R$ ${customer.amount.toFixed(2)}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                        <button class="edit-btn text-indigo-600 hover:text-indigo-900 mr-3" data-id="${customer.id}">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                        <button class="delete-btn text-red-600 hover:text-red-900" data-id="${customer.id}">
+                            <i class="fas fa-trash-alt"></i>
+                        </button>
+                    </td>
+                `;
+                customersTableBody.appendChild(row);
+            });
+            
+            // Add event listeners to edit and delete buttons
+            document.querySelectorAll('.edit-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const id = parseInt(this.getAttribute('data-id'));
+                    editCustomer(id);
+                });
+            });
+            
+            document.querySelectorAll('.delete-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const id = parseInt(this.getAttribute('data-id'));
+                    deleteCustomer(id);
+                });
+            });
+        }
+
+        // Add new customer
+        addCustomerBtn.addEventListener('click', function() {
+            currentCustomerId = null;
+            customerForm.reset();
+            modalTitle.textContent = 'Adicionar Cliente';
+            customerModal.classList.remove('hidden');
+        });
+
+        // Edit customer
+        function editCustomer(id) {
+            const customer = customers.find(c => c.id === id);
+            if (customer) {
+                currentCustomerId = id;
+                document.getElementById('name').value = customer.name;
+                document.getElementById('cpf').value = customer.cpf;
+                document.getElementById('phone').value = customer.phone;
+                document.getElementById('amount').value = customer.amount;
+                modalTitle.textContent = 'Editar Cliente';
+                customerModal.classList.remove('hidden');
+            }
+        }
+
+        // Delete customer
+        function deleteCustomer(id) {
+            if (confirm('Tem certeza que deseja excluir este cliente?')) {
+                customers = customers.filter(customer => customer.id !== id);
+                renderCustomers();
+            }
+        }
+
+        // Save customer (add or edit)
+        saveCustomerBtn.addEventListener('click', function() {
+            const name = document.getElementById('name').value;
+            const cpf = document.getElementById('cpf').value;
+            const phone = document.getElementById('phone').value;
+            const amount = parseFloat(document.getElementById('amount').value);
+            
+            if (name && cpf && phone && !isNaN(amount)) {
+                if (currentCustomerId) {
+                    // Edit existing customer
+                    const index = customers.findIndex(c => c.id === currentCustomerId);
+                    if (index !== -1) {
+                        customers[index] = { id: currentCustomerId, name, cpf, phone, amount };
+                    }
+                } else {
+                    // Add new customer
+                    const newId = customers.length > 0 ? Math.max(...customers.map(c => c.id)) + 1 : 1;
+                    customers.push({ id: newId, name, cpf, phone, amount });
+                }
+                
+                customerModal.classList.add('hidden');
+                renderCustomers();
+            } else {
+                alert('Por favor, preencha todos os campos corretamente.');
+            }
+        });
+
+        // Cancel modal
+        cancelModalBtn.addEventListener('click', function() {
+            customerModal.classList.add('hidden');
+        });
+
+        // Close modal when clicking outside
+        customerModal.addEventListener('click', function(e) {
+            if (e.target === customerModal) {
+                customerModal.classList.add('hidden');
+            }
+        });
+    </script>
+</body>
+</html>
+```
+
+This solution includes:
+
+1. *Login Page*:
+   - Beautiful gradient background with glass effect
+   - Form validation (username: admin, password: 1234)
+   - Error message display
+   - Responsive design
+
+2. *Customers Page*:
+   - Clean, responsive table displaying customer data
+   - Sample data for 5 customers
+   - Add, edit, and delete functionality
+   - Modal form for adding/editing customers
+   - Confirmation for deletion
+
+3. *Technical Features*:
+   - Pure HTML, CSS, and JavaScript (with Tailwind CSS for styling)
+   - No backend required (all data stored in memory)
+   - Easy to expand with more fields or functionality
+   - Responsive design that works on mobile and desktop
+   - Modern UI with icons from Font Awesome
+
+The code is well-organized and commented for easy maintenance and future expansion. You can easily add more fields to the customer form or
+</html>
